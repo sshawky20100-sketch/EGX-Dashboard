@@ -3,7 +3,36 @@ Technical Analysis Engine
 ==========================
 Computes SMA, EMA, RSI, MACD and generates Buy/Sell/Hold signals.
 """
+import streamlit as st
+import pandas as pd
+import technical  # This imports the code you just showed me
 
+st.title("EGX Dashboard Technical Analysis")
+
+# 1. Create some dummy data or load your CSV
+data = {
+    'date': pd.date_range(start='2024-01-01', periods=100),
+    'open': [100]*100,
+    'high': [110]*100,
+    'low': [90]*100,
+    'close': [105]*100,
+    'volume': [1000]*100
+}
+df = pd.DataFrame(data)
+
+# 2. Use your functions from technical.py
+df_with_indicators = technical.compute_all_indicators(df)
+analysis = technical.generate_signal(df_with_indicators)
+
+# 3. Display the results on the screen
+st.metric(label="Latest Signal", value=analysis['signal'])
+st.write(f"Confidence: {analysis['confidence']}%")
+
+st.subheader("Reasons:")
+for reason in analysis['reasons']:
+    st.write(reason)
+
+st.line_chart(df_with_indicators[['close', 'sma_20', 'sma_50']])
 import pandas as pd
 import numpy as np
 from typing import Dict, Tuple
